@@ -1,53 +1,52 @@
 on:
   schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron:  '40 0,12 * * *'
+    # run every day at...
+    - cron: "0 5 * * *"  # [5am UTC]/[6am UTC+1]
+    - cron: "0 17 * * *" # [5pm UTC]/[6pm UTC+1]
 
   push:
-    branches: 'update-gamescope-script'
+    branches:
+      - "update-gamescope-script"
 
 jobs:
-  check_updates:
+  check-for-new-commits:
+    name: "Check for new commits Plagman/gamescope:master"
     runs-on: ubuntu-latest
-    steps:
 
-      - name: add build deps and set git
+    steps:
+      - name: Add build deps and set git
         run: |
           sudo apt-get install -y devscripts
+          bot_id=$(
+            curl --silent https://api.github.com/users/github-actions%5Bbot%5D
+            | grep '"id":'
+          )
+          bot_id="${bot_id//[!0-9]}"
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.email "${bot_id}+github-actions[bot]@users.noreply.github.com"
 
-      - if: github.event_name == 'schedule'
+      - name: Checkout gamescope-pkg repo with submodules
         uses: actions/checkout@v3
         with:
           ref: main
           submodules: recursive
 
-      - if: github.event_name == 'push'
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
-
-      - shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Save the current tag submodule/gamescope
         run: |
-          git fetch --no-recurse-submodules
-          (
-            cd gamescope
-            git fetch --no-recurse-submodules
-            git fetch --no-recurse-submodules --tag
-          )
+          echo "CURRENT_TAG=$(git -C gamescope describe --tags HEAD)" >> $GITHUB_ENV
 
-          set +e
-          ./scripts/gamescope_version.py
-          RESULT=$?
-          set -e
+      - name: Pull and checkout master Plagman/gamescope
+        run: |
+          git submodule update --remote gamescope
 
-          if [[ $RESULT -eq 42 ]]; then
-            echo '::warning ::Update found, PR raised.'
-          elif [[ $RESULT -eq 43 ]]; then
-            echo '::warning ::Update found, update branch already exists, you probably have a PR to merge..'
-          else
-            exit $RESULT
-          fi
+      - name: Get new index of current_tag submodule/gamescope
+        run: |
+          hashes=$(git -C gamescope log --pretty='%H' ba4fbb3..HEAD)
+          readarray -t TAGS < <(git -C gamescope describe --tags ${hashes})
+          CURRENT_INDEX=0
+          for t in "${tags[@]}"; do
+            [[ "$t" == "${{ env.current_tag }}" ]] && { echo "$current_index"; break; }
+            (( ++i ))
+          done
+          echo "TAGS=$TAGS" >> $GITHUB_ENV
+          ### Before going on, this has to be tested on an actual runner ###
