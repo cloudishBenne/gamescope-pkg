@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - "update-gamescope-script"
+      - "main"
 
 jobs:
   check-for-new-commits:
@@ -31,15 +32,15 @@ jobs:
           ref: main
           submodules: recursive
 
-      - name: Save the current tag submodule/gamescope
+      - name: Save the current tag of submodule/gamescope
         run: |
           echo "CURRENT_TAG=$(git -C gamescope describe --tags HEAD)" >> $GITHUB_ENV
 
-      - name: Pull and checkout master Plagman/gamescope
+      - name: Pull and checkout master of Plagman/gamescope
         run: |
           git submodule update --remote gamescope
 
-      - name: Get new index of current_tag submodule/gamescope
+      - name: Get the new index of the current_tag of submodule/gamescope
         run: |
           hashes=$(git -C gamescope log --pretty='%H' ba4fbb3..HEAD)
           readarray -t TAGS < <(git -C gamescope describe --tags ${hashes})
@@ -49,4 +50,5 @@ jobs:
             (( ++i ))
           done
           echo "TAGS=$TAGS" >> $GITHUB_ENV
+          echo "$GITHUB_ENV"
           ### Before going on, this has to be tested on an actual runner ###
