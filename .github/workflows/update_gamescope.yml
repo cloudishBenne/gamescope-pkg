@@ -1,3 +1,4 @@
+name: update gamescope
 on:
   schedule:
     # run every day at...
