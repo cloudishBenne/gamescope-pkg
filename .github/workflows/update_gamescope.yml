@@ -18,7 +18,7 @@ jobs:
         run: |
           sudo apt-get install -y devscripts
           bot_id=$(
-            curl --silent https://api.github.com/users/github-actions%5Bbot%5D
+            curl --silent https://api.github.com/users/github-actions%5Bbot%5D \
             | grep '"id":'
           )
           bot_id="${bot_id//[!0-9]}"
