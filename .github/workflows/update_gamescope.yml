@@ -54,8 +54,8 @@ jobs:
           hashes=$(git -C gamescope log --pretty='%H' ba4fbb3..HEAD)
           readarray -t TAGS < <(git -C gamescope describe --tags ${hashes})
           CURRENT_INDEX=0
-          for t in "${tags[@]}"; do
-            [[ "$t" == "${{ env.current_tag }}" ]] && { echo "$current_index"; break; }
+          for t in "${TAGS[@]}"; do
+            [[ "$t" == "${{ env.CURRENT_TAG }}" ]] && { echo "$CURRENT_INDEX"; break; }
             (( ++i ))
           done
           echo "TAGS=$TAGS" >> $GITHUB_ENV
