@@ -32,6 +32,11 @@ jobs:
         with:
           ref: main
           submodules: recursive
+          
+      - name: Fetch tags
+        run: |
+          git fetch --tags --all
+          git -C gamescope fetch --tags --all
 
       - name: Save the current tag of submodule/gamescope
         run: |
