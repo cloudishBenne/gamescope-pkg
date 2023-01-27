@@ -49,7 +49,8 @@ jobs:
           # exports array TAGS as a string TAGS_STRING
           # to import TAGS_STRING as the array TAGS in a following step:
           # readarray -t TAGS < <(echo "$TAGS_STRING")
-          IFS=$'\n' echo "TAGS_STRING=${TAGS[*]}" >> $GITHUB_ENV
+          IFS=$'\n' TAGS_STRING="${TAGS[*]}"; unset IFS
+          echo "TAGS_STRING=$TAGS_STRING" >> $GITHUB_ENV
           unset IFS
           CURRENT_INDEX=0
           for t in "${TAGS[@]}"; do
