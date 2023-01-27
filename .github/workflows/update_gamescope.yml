@@ -32,10 +32,7 @@ jobs:
         with:
           ref: main
           submodules: recursive
-          
-      - name: Fetch tags of Plagman/gamescope
-        run: |
-          git -C gamescope fetch --tags --all --no-recurse-submodules
+          fetch-depth: 0
 
       - name: Save the current tag of submodule/gamescope
         run: |
@@ -44,10 +41,6 @@ jobs:
       - name: Pull and checkout master of Plagman/gamescope
         run: |
           git submodule update --remote gamescope
-          
-      - name: Fetch tags of Plagman/gamescope again
-        run: |
-          git -C gamescope fetch --tags --all --no-recurse-submodules
 
       - name: Get the new index of the current_tag of submodule/gamescope
         run: |
