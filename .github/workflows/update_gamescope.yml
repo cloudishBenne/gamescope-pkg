@@ -49,7 +49,7 @@ jobs:
           CURRENT_INDEX=0
           for t in "${TAGS[@]}"; do
             [[ "$t" == "${{ env.CURRENT_TAG }}" ]] && { echo "$CURRENT_INDEX"; break; }
-            (( ++i ))
+            (( ++CURRENT_INDEX ))
           done
           echo "TAGS=$TAGS" >> $GITHUB_ENV
           echo "CURRENT_INDEX=$CURRENT_INDEX" >> $GITHUB_ENV
