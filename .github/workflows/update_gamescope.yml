@@ -52,5 +52,9 @@ jobs:
             (( ++i ))
           done
           echo "TAGS=$TAGS" >> $GITHUB_ENV
-          echo "$GITHUB_ENV"
-          ### Before going on, this has to be tested on an actual runner ###
+          echo "CURRENT_INDEX=$CURRENT_INDEX" >> $GITHUB_ENV
+      - name: Echo current env-vars
+        run: |
+          echo "CURRENT_TAG: ${{ env.CURRENT_TAG }}"
+          echo "CURRENT_INDEX: ${{ env.CURRENT_INDEX }}"
+          echo "TAGS: ${{ env.TAGS }}"
