@@ -62,4 +62,6 @@ jobs:
           echo "CURRENT_INDEX: ${{ env.CURRENT_INDEX }}"
           echo "TAGS_STRING: ${{ env.TAGS_STRING }}"
           readarray -d ' ' -t TAGS < <(echo "${{ env.TAGS_STRING }}")
-          echo "${TAGS[*]}"
+          echo "TAGS: ${TAGS[*]}"
+          echo "TAGS[0]: ${TAGS[0]}"
+          echo "TAGS[1]: ${TAGS[1]}"
