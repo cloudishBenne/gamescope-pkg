@@ -48,10 +48,8 @@ jobs:
           readarray -t TAGS < <(git -C gamescope describe --tags ${hashes})
           # exports array TAGS as a string TAGS_STRING
           # to import TAGS_STRING as the array TAGS in a following step:
-          # readarray -t TAGS < <(echo "$TAGS_STRING")
-          IFS=$'\n' TAGS_STRING="${TAGS[*]}"
-          unset IFS
-          echo "TAGS_STRING=$TAGS_STRING" >> $GITHUB_ENV
+          # readarray -d ' ' -t TAGS < <(echo "${{ env.TAGS_STRING }}")
+          echo "TAGS_STRING=${TAGS[*]}" >> $GITHUB_ENV
           CURRENT_INDEX=0
           for t in "${TAGS[@]}"; do
             [[ "$t" == "${{ env.CURRENT_TAG }}" ]] && { echo "$CURRENT_INDEX"; break; }
@@ -62,4 +60,6 @@ jobs:
         run: |
           echo "CURRENT_TAG: ${{ env.CURRENT_TAG }}"
           echo "CURRENT_INDEX: ${{ env.CURRENT_INDEX }}"
-          echo "TAGS: ${{ env.TAGS_STRING }}"
+          echo "TAGS_STRING: ${{ env.TAGS_STRING }}"
+          readarray -d ' ' -t TAGS < <(echo "${{ env.TAGS_STRING }}")
+          echo "${TAGS[*]}"
