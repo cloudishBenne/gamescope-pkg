@@ -59,7 +59,7 @@ jobs:
         run: |
           mkdir -p ${HOME}/.local/lib/perl/Devscripts
           mkdir -p ${HOME}/.local/bin
-          echo "PERL5LIB="${HOME}/.local/lib/perl" >> $GITHUB_ENV
+          echo "PERL5LIB=${HOME}/.local/lib/perl" >> $GITHUB_ENV
           curl -o ${HOME}/.local/lib/perl/Devscripts/Compression.pm \
             https://raw.githubusercontent.com/Debian/devscripts/master/lib/Devscripts/Compression.pm
           curl -o ${HOME}/.local/lib/perl/Devscripts/Debbugs.pm \
