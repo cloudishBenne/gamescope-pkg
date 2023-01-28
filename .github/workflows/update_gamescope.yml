@@ -69,6 +69,6 @@ jobs:
           chmod +x ${HOME}/.local/bin/debchange
       - name: Test if debchange funcional
         run: |
-          env DEBNAME='cloudishBenne' \
+          env DEBFULLNAME='cloudishBenne' \
           DEBEMAIL='30512375+cloudishBenne@users.noreply.github.com' \
           debchange -h
