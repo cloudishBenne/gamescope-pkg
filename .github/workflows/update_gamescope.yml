@@ -16,9 +16,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Add build deps and set git
+      - name: Set git
         run: |
-          sudo apt-get install -y devscripts
           bot_id=$(
             curl --silent https://api.github.com/users/github-actions%5Bbot%5D \
             | grep '"id":'
@@ -56,14 +55,20 @@ jobs:
             (( ++CURRENT_INDEX ))
           done
           echo "CURRENT_INDEX=$CURRENT_INDEX" >> $GITHUB_ENV
-      - name: Echo current env-vars
+      - name: Install debchange without the bloated devscripts package
         run: |
-          echo "CURRENT_TAG: ${{ env.CURRENT_TAG }}"
-          echo "CURRENT_INDEX: ${{ env.CURRENT_INDEX }}"
-          echo "TAGS_STRING: ${{ env.TAGS_STRING }}"
-          readarray -d ' ' -t TAGS < <(echo "${{ env.TAGS_STRING }}")
-          echo "TAGS: ${TAGS[*]}"
-          echo "TAGS[0]: ${TAGS[0]}"
-          echo "TAGS[1]: ${TAGS[1]}"
-          echo "$(pwd)"
-          echo "$PATH"
+          mkdir -p ${HOME}/.local/lib/perl/Devscripts
+          mkdir -p ${HOME}/.local/bin
+          export PERL5LIB="${HOME}/.local/lib/perl"
+          curl -o ${HOME}/.local/lib/perl/Devscripts/Compression.pm \
+            https://raw.githubusercontent.com/Debian/devscripts/master/lib/Devscripts/Compression.pm
+          curl -o ${HOME}/.local/lib/perl/Devscripts/Debbugs.pm \
+            https://raw.githubusercontent.com/Debian/devscripts/master/lib/Devscripts/Debbugs.pm
+          curl -o ${HOME}/.local/bin/debchange \
+            https://raw.githubusercontent.com/Debian/devscripts/master/scripts/debchange.pl
+          chmod +x ${HOME}/.local/bin/debchange
+      - name: Test if debchange funcional
+        run: |
+          env DEBNAME='cloudishBenne' \
+          DEBEMAIL='30512375+cloudishBenne@users.noreply.github.com' \
+          debchange -h
