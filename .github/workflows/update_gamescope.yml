@@ -66,4 +66,4 @@ jobs:
           echo "TAGS[0]: ${TAGS[0]}"
           echo "TAGS[1]: ${TAGS[1]}"
           echo "$(pwd)"
-          echo "$(ls -lAhF)"
+          echo "$(ls -lAhF $HOME/.local/bin)"
