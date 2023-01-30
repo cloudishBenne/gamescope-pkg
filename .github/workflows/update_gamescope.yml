@@ -12,7 +12,7 @@ on:
 
 jobs:
   check-for-new-commits:
-    name: "Check for new commits Plagman/gamescope:master"
+    name: "Check for new commits on Plagman/gamescope:master"
     runs-on: ubuntu-latest
 
     steps:
