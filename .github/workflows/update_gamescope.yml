@@ -37,7 +37,7 @@ jobs:
         run: |
           echo "CURRENT_TAG=$(git -C gamescope describe --tags HEAD)" >> $GITHUB_ENV
           echo "### Current commit :pushpin:" >> $GITHUB_STEP_SUMMARY
-          echo "## ${CURRENT_TAG}" >> $GITHUB_STEP_SUMMARY
+          echo "#### ${CURRENT_TAG}" >> $GITHUB_STEP_SUMMARY
           echo "$(git -C gamescope log --abbrev-commit --max-count=1)" >> $GITHUB_STEP_SUMMARY
 
       - name: Pull and checkout master of Plagman/gamescope
@@ -65,7 +65,7 @@ jobs:
         run: |
           echo "NEXT_TAG=$(git -C gamescope describe --tags HEAD)" >> $GITHUB_ENV
           echo "### Next commit :arrow_up:" >> $GITHUB_STEP_SUMMARY
-          echo "## ${NEXT_TAG}" >> $GITHUB_STEP_SUMMARY
+          echo "#### ${NEXT_TAG}" >> $GITHUB_STEP_SUMMARY
           echo "$(git -C gamescope log --abbrev-commit --max-count=1)" >> $GITHUB_STEP_SUMMARY
       
       - name: Install debchange without the bloated devscripts package
