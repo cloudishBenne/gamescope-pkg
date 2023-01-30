@@ -35,10 +35,13 @@ jobs:
 
       - name: Save the current tag of submodule/gamescope
         run: |
-          echo "CURRENT_TAG=$(git -C gamescope describe --tags HEAD)" >> $GITHUB_ENV
+          CURRENT_TAG=$(git -C gamescope describe --tags HEAD)
+          echo "CURRENT_TAG=${CURRENT_TAG}" >> $GITHUB_ENV
           echo "### Current commit :pushpin:" >> $GITHUB_STEP_SUMMARY
-          echo "#### ${CURRENT_TAG}" >> $GITHUB_STEP_SUMMARY
+          echo "[${CURRENT_TAG}](https://github.com/Plagman/gamescope/tree/${CURRENT_TAG})" >> $GITHUB_STEP_SUMMARY
+          echo "```bash" >> $GITHUB_STEP_SUMMARY
           echo "$(git -C gamescope log --abbrev-commit --max-count=1)" >> $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
 
       - name: Pull and checkout master of Plagman/gamescope
         run: |
@@ -58,15 +61,19 @@ jobs:
             (( ++CURRENT_INDEX ))
           done
           echo "CURRENT_INDEX=${CURRENT_INDEX}" >> $GITHUB_ENV
-          echo "### Current release :bookmark:" >> $GITHUB_STEP_SUMMARY
+          echo "### Current release :package:" >> $GITHUB_STEP_SUMMARY
           echo "gamescope-pkg is ${CURRENT_INDEX} commits behind." >> $GITHUB_STEP_SUMMARY
           
       - name: Save the newest tag of submodule/gamescope
         run: |
-          echo "NEXT_TAG=$(git -C gamescope describe --tags HEAD)" >> $GITHUB_ENV
+          NEXT_TAG=$(git -C gamescope describe --tags HEAD)
+          echo "NEXT_TAG=${NEXT_TAG}" >> $GITHUB_ENV
           echo "### Next commit :arrow_up:" >> $GITHUB_STEP_SUMMARY
-          echo "#### ${NEXT_TAG}" >> $GITHUB_STEP_SUMMARY
-          echo "$(git -C gamescope log --abbrev-commit --max-count=1)" >> $GITHUB_STEP_SUMMARY
+          echo "[${NEXT_TAG}](https://github.com/Plagman/gamescope/tree/${NEXT_TAG})" >> $GITHUB_STEP_SUMMARY
+          echo "New commits since current:" >> $GITHUB_STEP_SUMMARY
+          echo "```bash" >> $GITHUB_STEP_SUMMARY
+          echo "$(git -C gamescope log --abbrev-commit --max-count=${{ env.CURRENT_INDEX }})" >> $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
       
       - name: Install debchange without the bloated devscripts package
         run: |
