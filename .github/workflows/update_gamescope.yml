@@ -36,6 +36,9 @@ jobs:
       - name: Save the current tag of submodule/gamescope
         run: |
           echo "CURRENT_TAG=$(git -C gamescope describe --tags HEAD)" >> $GITHUB_ENV
+          echo "### Current commit :pushpin:" >> $GITHUB_STEP_SUMMARY
+          echo "## ${CURRENT_TAG}" >> $GITHUB_STEP_SUMMARY
+          echo "$(git -C gamescope log --abbrev-commit --max-count=1)" >> $GITHUB_STEP_SUMMARY
 
       - name: Pull and checkout master of Plagman/gamescope
         run: |
@@ -51,14 +54,19 @@ jobs:
           echo "TAGS_STRING=${TAGS[*]}" >> $GITHUB_ENV
           CURRENT_INDEX=0
           for t in "${TAGS[@]}"; do
-            [[ "$t" == "${{ env.CURRENT_TAG }}" ]] && { echo "$CURRENT_INDEX"; break; }
+            [[ "$t" == "${{ env.CURRENT_TAG }}" ]] && { echo "${CURRENT_INDEX}"; break; }
             (( ++CURRENT_INDEX ))
           done
-          echo "CURRENT_INDEX=$CURRENT_INDEX" >> $GITHUB_ENV
+          echo "CURRENT_INDEX=${CURRENT_INDEX}" >> $GITHUB_ENV
+          echo "### Current release :bookmark:" >> $GITHUB_STEP_SUMMARY
+          echo "gamescope-pkg is ${CURRENT_INDEX} commits behind." >> $GITHUB_STEP_SUMMARY
           
       - name: Save the newest tag of submodule/gamescope
         run: |
           echo "NEXT_TAG=$(git -C gamescope describe --tags HEAD)" >> $GITHUB_ENV
+          echo "### Next commit :arrow_up:" >> $GITHUB_STEP_SUMMARY
+          echo "## ${NEXT_TAG}" >> $GITHUB_STEP_SUMMARY
+          echo "$(git -C gamescope log --abbrev-commit --max-count=1)" >> $GITHUB_STEP_SUMMARY
       
       - name: Install debchange without the bloated devscripts package
         run: |
