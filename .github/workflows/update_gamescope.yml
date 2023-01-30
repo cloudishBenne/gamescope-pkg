@@ -71,8 +71,9 @@ jobs:
           echo "### Next commit :arrow_up:" >> $GITHUB_STEP_SUMMARY
           echo "[${NEXT_TAG}](https://github.com/Plagman/gamescope/tree/${NEXT_TAG})" >> $GITHUB_STEP_SUMMARY
           echo "New commits since current:" >> $GITHUB_STEP_SUMMARY
+          difflog=$(git -C gamescope log --abbrev-commit --max-count=${{ env.CURRENT_INDEX }})
           echo "```bash" >> $GITHUB_STEP_SUMMARY
-          echo "$(git -C gamescope log --abbrev-commit --max-count=${{ env.CURRENT_INDEX }})" >> $GITHUB_STEP_SUMMARY
+          echo "${difflog}" >> $GITHUB_STEP_SUMMARY
           echo "```" >> $GITHUB_STEP_SUMMARY
       
       - name: Install debchange without the bloated devscripts package
