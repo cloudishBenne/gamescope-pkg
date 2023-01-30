@@ -41,7 +41,7 @@ jobs:
         run: |
           git submodule update --remote gamescope
 
-      - name: Get the new index of the current_tag of submodule/gamescope
+      - name: Get the new index of CURRENT_TAG of submodule/gamescope
         run: |
           hashes=$(git -C gamescope log --pretty='%H' ba4fbb3..HEAD)
           readarray -t TAGS < <(git -C gamescope describe --tags ${hashes})
@@ -55,6 +55,11 @@ jobs:
             (( ++CURRENT_INDEX ))
           done
           echo "CURRENT_INDEX=$CURRENT_INDEX" >> $GITHUB_ENV
+          
+      - name: Save the newest tag of submodule/gamescope
+        run: |
+          echo "NEXT_TAG=$(git -C gamescope describe --tags HEAD)" >> $GITHUB_ENV
+      
       - name: Install debchange without the bloated devscripts package
         run: |
           mkdir -p ${HOME}/.local/lib/perl/Devscripts
@@ -67,6 +72,7 @@ jobs:
           curl -o ${HOME}/.local/bin/debchange \
             https://raw.githubusercontent.com/Debian/devscripts/master/scripts/debchange.pl
           chmod +x ${HOME}/.local/bin/debchange
+          
       - name: Test if debchange funcional
         run: |
           env DEBFULLNAME='cloudishBenne' \
