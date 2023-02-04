@@ -19,7 +19,7 @@ jobs:
       - name: Set git
         run: |
           bot_id="$(
-            curl --silent https://api.github.com/users/github-actions%5Bbot%5D \
+            curl --silent https://api.github.com/users/github-actions%5Bbot%5D \ 
             | grep '"id":'
           )" || {
             echo "Error: failed to retrieve bot ID from Github API." >&2
@@ -89,6 +89,42 @@ jobs:
           echo '```bash' >> $GITHUB_STEP_SUMMARY
           echo -e "${log}" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
+      
+      - name: Update changelog
+        run: |
+          log="$(git -C gamescope log --pretty=format:"  [ %aN ]%n  * (%h) %s" --max-count=${{ env.CURRENT_INDEX }})"
+          PKG_TAG="${CURRENT_TAG//-g/+g}~1"
+          changelog="  * New upstream release ${CURRENT_TAG}"
+          changelog+=$'\n\n'
+          current_author=""
+          while IFS= read -r line; do
+            # Check if the line starts with an author
+            if [[ "$line" =~ ^\ \ \[.*\] ]]; then
+              author="$line"
+              if [[ "$current_author" != "$author" ]]; then
+                # If this is not the first author, add a newline before the next author
+                if [[ -n $current_author ]]; then
+                  changelog+=$'\n'
+                fi
+                current_author="$author"
+                changelog+=$line$'\n'
+              fi
+            else
+              changelog+=$line$'\n'
+            fi
+          done <<< "$log"
+          # Test appending to changelog
+          changelog_file="ubuntu_22.04/03-package/changelog"
+          pkg_name="gamescope"
+          ubuntu="jammy"
+          urgency="urgency=medium"
+          maintainer="cloudishBenne <30512375+cloudishBenne@users.noreply.github.com>"
+          date="$(date +"%a, %d %b %Y %T %z")"
+          { 
+            echo -e "${pkg_name} (${PKG_TAG}) ${ubuntu}; ${urgency}\n\n${changelog}\n -- ${maintainer} ${date}\n"
+            cat "$changelog_file"
+          } > "${changelog_file}.new"
+          mv "$changelog_file"{.new,}
       
       - name: Install debchange without the bloated devscripts package
         run: |
