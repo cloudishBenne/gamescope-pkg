@@ -21,10 +21,16 @@ jobs:
           bot_id="$(
             curl --silent https://api.github.com/users/github-actions%5Bbot%5D \
             | grep '"id":'
-          )"
+          )" || {
+            echo "Error: failed to retrieve bot ID from Github API." >&2
+            exit 1
+          }
           bot_id="${bot_id//[!0-9]}"
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "${bot_id}+github-actions[bot]@users.noreply.github.com"
+          git config --global user.email "${bot_id}+github-actions[bot]@users.noreply.github.com" || {
+            echo "Error: failed to set git config." >&2
+            exit 1
+          }
 
       - name: Checkout gamescope-pkg repo with submodules
         uses: actions/checkout@v3
