@@ -19,8 +19,8 @@ jobs:
       - name: Set git
         run: |
           bot_id="$(
-            curl --silent https://api.github.com/users/github-actions%5Bbot%5D \ 
-            | grep '"id":'
+            curl --silent 'https://api.github.com/users/github-actions%5Bbot%5D' | 
+            grep '"id":'
           )" || {
             echo "Error: failed to retrieve bot ID from Github API." >&2
             exit 1
